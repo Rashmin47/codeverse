@@ -14,11 +14,12 @@ import {
   socialProofStats,
   testimonials,
 } from "@/lib/data";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import "./globals.css";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -231,37 +232,65 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* Testimonials */}
       <section
         id="testimonials"
-        className="relative mt-14 z-10 py-16 sm:py-24 px-4 sm:px-6 bg-linear-to-r from-gray-900/50 to-purple-900/20"
+        className="relative z-10 py-16 sm:py-24 px-4 sm:px-6"
       >
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6">
-            <span className="gradient-text-primary">What Creators Say</span>
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {testimonials.map((client, index) => (
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6">
+              <span className="gradient-text-primary">What creators say</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
               <Card
                 key={index}
-                className="group transition-all duration-300 hover:scale-105 card-glass"
+                className="transition-all duration-300 hover:shadow-lg card-glass"
               >
-                <CardContent>
-                  <div
-                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl 
-                  flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform"
-                  ></div>
-                  <CardTitle className="text-lg sm:text-xl mb-3 sm:mb-4 text-white">
-                    {client.name}
-                  </CardTitle>
-                  <CardDescription className="text-sm sm:text-base text-gray-400">
-                    {client.content}
-                  </CardDescription>
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-1 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
+                  </div>
+                  <p className="mb-6 leading-relaxed text-gray-300">
+                    &quot;{testimonial.content}&quot;
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-12 h-12">
+                      <Image
+                        src={`https://images.unsplash.com/photo-${testimonial.imageId}?w=100&h=100&fit=crop&crop=face`}
+                        alt={testimonial.name}
+                        fill
+                        className="rounded-full border-2 border-gray-700 object-cover"
+                        sizes="48px"
+                      />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white">
+                        {testimonial.name}
+                      </div>
+                      <div className="text-gray-400 text-sm">
+                        {testimonial.role}
+                      </div>
+                      <Badge variant="secondary" className="mt-1">
+                        {testimonial.company}
+                      </Badge>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
       </section>
+
       <section className="relative z-10 py-16 sm:py-24 px-4 sm:px-6 bg-linear-to-r from-gray-900/50 to-purple-900/20">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 sm:mb-8">
