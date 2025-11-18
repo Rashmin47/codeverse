@@ -1,7 +1,9 @@
 "use server";
 
-import { GenerativeModel } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { success } from "zod";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // generating
 export async function generateBlogContent(title, category = "", tags = []) {
@@ -10,8 +12,8 @@ export async function generateBlogContent(title, category = "", tags = []) {
       throw new Error("Title is required to generate content");
     }
 
-    const model = GenerativeModel.getGenerativeModel({
-      model: "gemini-1.5-flash",
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
     });
 
     const prompt = `
@@ -82,11 +84,11 @@ export async function improveContent(
       throw new Error("Content is required for improvement");
     }
 
-    const model = GenerativeModel.getGenerativeModel({
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash",
     });
 
-    let prompt = "";
+    let prompt;
 
     switch (improvementType) {
       case "expand":

@@ -99,7 +99,7 @@ const PostEditorHeader = ({
               open={isPublishMenuOpen}
               onOpenChange={setIsPublishMenuOpen}
             >
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
                 <Button variant="primary" disabled={isPublishing}>
                   {isPublishing ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

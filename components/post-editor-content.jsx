@@ -105,7 +105,20 @@ const PostEditorContent = ({ form, setQuillRef, onImageUpload }) => {
         type === "generate"
           ? await generateBlogContent(title, category, tags || [])
           : await improveContent(content, improvementType);
-    } catch (error) {}
+
+      if (result.success) {
+        setValue("content", result.content);
+        toast.success(
+          `Content ${type === "generate" ? "generated" : improvementType + "d"} successfully!`
+        );
+      } else {
+        toast.error(result.error);
+      }
+    } catch (error) {
+      toast.error(`Failed to ${type} content. Please try again.`);
+    } finally {
+      type === "generate" ? setIsGenerating(false) : setIsImproving(false);
+    }
   };
   return (
     <>
