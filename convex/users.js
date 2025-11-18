@@ -7,7 +7,7 @@ export const store = mutation({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Called storeUser without authentication present");
+      throw new Error("Called store without authentication present");
     }
 
     // Check if we've already stored this identity before.
@@ -40,7 +40,9 @@ export const getCurrentUser = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Called storeUser without authentication present");
+      // No authenticated identity for this request. Return null so callers
+      // can handle unauthenticated flows (instead of throwing).
+      return null;
     }
 
     // Check if we've already stored this identity before.

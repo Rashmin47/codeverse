@@ -6,6 +6,9 @@ import { mutation, query } from "./_generated/server";
 export const getUserDraft = query({
   handler: async (ctx) => {
     const user = ctx.runQuery(internal.users.getCurrentUser);
+    if (!user) {
+      throw new Error("Not authenticated");
+    }
     const draft = await ctx.db
       .query("posts")
       .filter((q) =>
@@ -32,6 +35,9 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const user = ctx.runQuery(internal.users.getCurrentUser);
+    if (!user) {
+      throw new Error("Not authenticated");
+    }
     const draft = await ctx.db
       .query("posts")
       .filter((q) =>

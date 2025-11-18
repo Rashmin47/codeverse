@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import PostEditor from "@/components/ui/post-editor";
 import { api } from "@/convex/_generated/api";
 import { useConvexQuery } from "@/hooks/use-convex-query";
 import { ArrowRight } from "lucide-react";
@@ -37,7 +38,7 @@ const CreatePost = () => {
       </div>
     );
   }
-  return <div>CreatePost</div>;
+  return <PostEditor initialData={existingDraft} mode="create" />;
 };
 
 export default CreatePost;

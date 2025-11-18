@@ -93,7 +93,6 @@ const SettingsPage = () => {
                 ) : (
                   "Update Username"
                 )}
-                Update Username
               </Button>
             </div>
           </form>
