@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import PostEditorHeader from "../post-editor-header";
 import PostEditorContent from "../post-editor-content";
 import PostEditorSettings from "../post-editor-settings";
+import ImageUploadModal from "../image-upload-modal";
+import { toast } from "sonner";
 const postSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
   content: z.string().min(1, "Content is required"),
@@ -59,7 +61,21 @@ const PostEditor = ({ initalData = null, mode = "create" }) => {
     return () => clearInterval(autoSave);
   }, [watchedValues.title, watchedValues.content]);
 
-  const handleImageSelect = (ImageData) => {};
+  const handleImageSelect = (imageData) => {
+    if (imageModalType === "featured") {
+      setValue("featuredImage", imageData.url);
+      toast.success("Featured image added!");
+    } else if (imageModalType === "content" && quillRef) {
+      const quill = quillRef.getEditor();
+      const range = quill.getSelection();
+
+      const index = range ? range.index : quill.getLength();
+      quill.insertEmbed(index, "image", imageData.url);
+      quill.setSelection(index + 1);
+      toast.success("Image inserted!");
+    }
+    setIsImageModalOpen(false);
+  };
 
   // Submit handler
   const onSubmit = async (data, action, silent = false) => {
@@ -150,6 +166,17 @@ const PostEditor = ({ initalData = null, mode = "create" }) => {
         onClose={() => setIsSettingsOpen(false)}
         form={form}
         mode={mode}
+      />
+
+      <ImageUploadModal
+        isOpen={isImageModalOpen}
+        onClose={() => setIsImageModalOpen(false)}
+        onImageSelect={handleImageSelect}
+        title={
+          imageModalType === "featured"
+            ? "Upload Featured Image"
+            : "Insert Image"
+        }
       />
     </div>
   );
