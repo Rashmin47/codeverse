@@ -595,9 +595,11 @@ const ImageUploadModal = ({
                 {transformedImage && (
                   <div className="relative">
                     <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
-                      <img
+                      <Image
                         src={transformedImage}
                         alt="Transformed preview"
+                        width={uploadedImage?.width || 800}
+                        height={uploadedImage?.height || 600}
                         className="w-full h-auto max-h-96 object-contain rounded-lg mx-auto"
                         onError={() => {
                           toast.error("Failed to load transformed image");

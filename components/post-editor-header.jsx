@@ -1,23 +1,24 @@
 "use client";
+
 import React, { useState } from "react";
-import { Button } from "./ui/button";
-import {
-  ArrowLeft,
-  Calendar,
-  Loader2,
-  Save,
-  Send,
-  Settings,
-} from "lucide-react";
-import { Badge } from "./ui/badge";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+import {
+  ArrowLeft,
+  Save,
+  Send,
+  Calendar,
+  Settings,
+  Loader2,
+} from "lucide-react";
 
-const PostEditorHeader = ({
+export default function PostEditorHeader({
   mode,
   initialData,
   isPublishing,
@@ -26,13 +27,16 @@ const PostEditorHeader = ({
   onSchedule,
   onSettingsOpen,
   onBack,
-}) => {
+}) {
   const [isPublishMenuOpen, setIsPublishMenuOpen] = useState(false);
+
   const isDraft = initialData?.status === "draft";
   const isEdit = mode === "edit";
+
   return (
     <header className="sticky top-0 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Left */}
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
@@ -53,6 +57,8 @@ const PostEditorHeader = ({
             </Badge>
           )}
         </div>
+
+        {/* Right */}
         <div className="flex items-center space-x-3">
           <Button
             variant="ghost"
@@ -62,12 +68,13 @@ const PostEditorHeader = ({
           >
             <Settings className="h-4 w-4" />
           </Button>
+
           {!isEdit && (
             <Button
-              variant="ghost"
-              size="sm"
               onClick={onSave}
               disabled={isPublishing}
+              variant="ghost"
+              size="sm"
               className="text-slate-400 hover:text-white"
             >
               {isPublishing ? (
@@ -77,20 +84,20 @@ const PostEditorHeader = ({
               )}
             </Button>
           )}
+
           {isEdit ? (
             <Button
-              variant="primary"
-              size="sm"
+              variant={"primary"}
+              disabled={isPublishing}
               onClick={() => {
                 onPublish();
                 setIsPublishMenuOpen(false);
               }}
-              disabled={isPublishing}
             >
               {isPublishing ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : (
-                <Send className="h-4 w-4" />
+                <Send className="h-4 w-4 mr-2" />
               )}
               Update
             </Button>
@@ -100,23 +107,23 @@ const PostEditorHeader = ({
               onOpenChange={setIsPublishMenuOpen}
             >
               <DropdownMenuTrigger asChild>
-                <Button variant="primary" disabled={isPublishing}>
+                <Button variant={"primary"} disabled={isPublishing}>
                   {isPublishing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
-                    <Send className="h-4 w-4" />
+                    <Send className="h-4 w-4 mr-2" />
                   )}
                   Publish
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem
                   onClick={() => {
                     onPublish();
                     setIsPublishMenuOpen(false);
                   }}
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4 mr-2" />
                   Publish now
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -125,7 +132,7 @@ const PostEditorHeader = ({
                     setIsPublishMenuOpen(false);
                   }}
                 >
-                  <Calendar className="h-4 w-4" />
+                  <Calendar className="h-4 w-4 mr-2" />
                   Schedule for later
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -135,6 +142,4 @@ const PostEditorHeader = ({
       </div>
     </header>
   );
-};
-
-export default PostEditorHeader;
+}

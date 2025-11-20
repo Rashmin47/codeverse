@@ -1,50 +1,59 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import { useConvexMutation } from "@/hooks/use-convex-query";
-import { useRouter } from "next/navigation";
-import PostEditorHeader from "../post-editor-header";
-import PostEditorContent from "../post-editor-content";
-import PostEditorSettings from "../post-editor-settings";
-import ImageUploadModal from "../image-upload-modal";
-import { toast } from "sonner";
+import PostEditorHeader from "./post-editor-header";
+import PostEditorContent from "./post-editor-content";
+import PostEditorSettings from "./post-editor-settings";
+import ImageUploadModal from "./image-upload-modal";
 const postSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
   content: z.string().min(1, "Content is required"),
   category: z.string().optional(),
-  tags: z.array(z.string()).max(10, "maximum 10 tags allowed"),
+  tags: z.array(z.string()).max(10, "Maximum 10 tags allowed"),
   featuredImage: z.string().optional(),
   scheduledFor: z.string().optional(),
 });
 
-const PostEditor = ({ initalData = null, mode = "create" }) => {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+export default function PostEditor({
+  initialData = null,
+  mode = "create", // "create" or "edit"
+}) {
+  const router = useRouter();
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [imageModalType, setImageModalType] = useState("featured");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [quillRef, setQuillRef] = useState(null);
-  const router = useRouter();
+
+  // Mutations with built-in loading states
   const { mutate: createPost, isLoading: isCreateLoading } = useConvexMutation(
     api.posts.create
   );
   const { mutate: updatePost, isLoading: isUpdating } = useConvexMutation(
     api.posts.update
   );
+
+  // Form setup
   const form = useForm({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      title: initalData?.title || "",
-      content: initalData?.content || "",
-      category: initalData?.category || "",
-      tags: initalData?.tags || [],
-      featuredImage: initalData?.featuredImage || "",
-      scheduledFor: initalData?.scheduledFor
-        ? new Date(initalData.scheduledFor).toISOString().slice(0, 16)
+      title: initialData?.title || "",
+      content: initialData?.content || "",
+      category: initialData?.category || "",
+      tags: initialData?.tags || [],
+      featuredImage: initialData?.featuredImage || "",
+      scheduledFor: initialData?.scheduledFor
+        ? new Date(initialData.scheduledFor).toISOString().slice(0, 16)
         : "",
     },
   });
+
   const { handleSubmit, watch, setValue } = form;
   const watchedValues = watch();
 
@@ -61,6 +70,7 @@ const PostEditor = ({ initalData = null, mode = "create" }) => {
     return () => clearInterval(autoSave);
   }, [watchedValues.title, watchedValues.content]);
 
+  // Handle image selection
   const handleImageSelect = (imageData) => {
     if (imageModalType === "featured") {
       setValue("featuredImage", imageData.url);
@@ -68,8 +78,8 @@ const PostEditor = ({ initalData = null, mode = "create" }) => {
     } else if (imageModalType === "content" && quillRef) {
       const quill = quillRef.getEditor();
       const range = quill.getSelection();
-
       const index = range ? range.index : quill.getLength();
+
       quill.insertEmbed(index, "image", imageData.url);
       quill.setSelection(index + 1);
       toast.success("Image inserted!");
@@ -97,13 +107,13 @@ const PostEditor = ({ initalData = null, mode = "create" }) => {
       if (mode === "edit" && initialData?._id) {
         // Always use update for edit mode
         resultId = await updatePost({
-          id: initalData._id,
+          id: initialData._id,
           ...postData,
         });
       } else if (initialData?._id && action === "draft") {
         // If we have existing draft data, update it
         resultId = await updatePost({
-          id: initalData._id,
+          id: initialData._id,
           ...postData,
         });
       } else {
@@ -140,18 +150,20 @@ const PostEditor = ({ initalData = null, mode = "create" }) => {
     }
     handleSubmit((data) => onSubmit(data, "schedule"))();
   };
+
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       <PostEditorHeader
         mode={mode}
-        initialData={initalData}
+        initialData={initialData}
         isPublishing={isCreateLoading || isUpdating}
         onSave={handleSave}
         onPublish={handlePublish}
         onSchedule={handleSchedule}
-        onSettingOpen={() => setIsSettingsOpen(true)}
+        onSettingsOpen={() => setIsSettingsOpen(true)}
         onBack={() => router.push("/dashboard")}
       />
+
       <PostEditorContent
         form={form}
         setQuillRef={setQuillRef}
@@ -180,6 +192,4 @@ const PostEditor = ({ initalData = null, mode = "create" }) => {
       />
     </div>
   );
-};
-
-export default PostEditor;
+}

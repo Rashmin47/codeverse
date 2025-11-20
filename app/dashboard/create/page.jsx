@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import PostEditor from "@/components/ui/post-editor";
+import PostEditor from "@/components/post-editor";
 import { api } from "@/convex/_generated/api";
 import { useConvexQuery } from "@/hooks/use-convex-query";
 import { ArrowRight } from "lucide-react";
