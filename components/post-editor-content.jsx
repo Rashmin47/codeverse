@@ -128,6 +128,7 @@ const PostEditorContent = ({ form, setQuillRef, onImageUpload }) => {
             <div className="relative group">
               <Image
                 src={watchedValues.featuredImage}
+                fill
                 alt="Featured"
                 className="w-full h-80 object-cover rounded-xl"
               />
