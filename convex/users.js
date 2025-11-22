@@ -62,7 +62,7 @@ export const getCurrentUser = query({
 export const updateUsername = mutation({
   args: { username: v.string() },
   handler: async (ctx, args) => {
-    const user = ctx.runQuery(internal.users.getCurrentUser);
+    const user = await ctx.runQuery(internal.users.getCurrentUser);
     const usernameRegex = /^[a-zA-Z0-9_-]+$/;
     if (!usernameRegex.test(args.username)) {
       throw new Error(
